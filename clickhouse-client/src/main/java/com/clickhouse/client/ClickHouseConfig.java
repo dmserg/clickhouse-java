@@ -228,6 +228,7 @@ public class ClickHouseConfig implements ClickHouseDataConfig {
     private final ClickHouseSslMode sslMode;
     private final String sslRootCert;
     private final String sslCert;
+    private final String sslCertPassword;
     private final String sslKey;
     private final String keyStoreType;
     private final String trustStore;
@@ -348,6 +349,7 @@ public class ClickHouseConfig implements ClickHouseDataConfig {
         this.sslMode = getOption(ClickHouseClientOption.SSL_MODE, ClickHouseSslMode.class);
         this.sslRootCert = getStrOption(ClickHouseClientOption.SSL_ROOT_CERTIFICATE);
         this.sslCert = getStrOption(ClickHouseClientOption.SSL_CERTIFICATE);
+        this.sslCertPassword = getStrOption(ClickHouseClientOption.SSL_CERTIFICATE_PASSWORD);
         this.sslKey = getStrOption(ClickHouseClientOption.SSL_KEY);
         this.keyStoreType = getStrOption(ClickHouseClientOption.KEY_STORE_TYPE);
         this.trustStore = getStrOption(ClickHouseClientOption.TRUST_STORE);
@@ -624,6 +626,10 @@ public class ClickHouseConfig implements ClickHouseDataConfig {
 
     public String getSslCert() {
         return sslCert;
+    }
+
+    public String getSslCertPassword() {
+        return sslCertPassword;
     }
 
     public String getSslKey() {

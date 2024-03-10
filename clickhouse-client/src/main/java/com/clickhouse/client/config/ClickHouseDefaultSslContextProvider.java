@@ -117,9 +117,26 @@ public class ClickHouseDefaultSslContextProvider implements ClickHouseSslContext
         return ks;
     }
 
+    protected KeyStore getProtectedKeyStore(String cert, String password) throws NoSuchAlgorithmException,
+            IOException, CertificateException {
+        final KeyStore ks;
+
+        try (InputStream in = ClickHouseUtils.getFileInputStream(cert)) {
+            try {
+                ks = KeyStore.getInstance(KeyStore.getDefaultType());
+                ks.load(in, password.toCharArray());
+            } catch (KeyStoreException e) {
+                throw new NoSuchAlgorithmException(
+                        ClickHouseUtils.format("%s KeyStore not available", KeyStore.getDefaultType()));
+            }
+        }
+        return ks;
+    }
+
     protected SSLContext getJavaSslContext(ClickHouseConfig config) throws SSLException {
         ClickHouseSslMode sslMode = config.getSslMode();
         String clientCert = config.getSslCert();
+        String clientCertPassword = config.getSslCertPassword();
         String clientKey = config.getSslKey();
         String sslRootCert = config.getSslRootCert();
         String truststorePath = config.getTrustStore();
@@ -153,7 +170,13 @@ public class ClickHouseDefaultSslContextProvider implements ClickHouseSslContext
                     if (clientCert != null && !clientCert.isEmpty()) {
                         KeyManagerFactory factory = KeyManagerFactory
                                 .getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                        factory.init(getKeyStore(clientCert, clientKey), null);
+                        if (clientCertPassword != null && !clientCertPassword.isEmpty()) {
+                            // Load client cert as provided in cert file
+                            factory.init(getProtectedKeyStore(clientCert, clientCertPassword), null);
+                        }
+                        else {
+                            factory.init(getKeyStore(clientCert, clientKey), null);
+                        }
                         kms = factory.getKeyManagers();
                     }
 

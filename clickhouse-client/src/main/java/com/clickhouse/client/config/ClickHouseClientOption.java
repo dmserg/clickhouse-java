@@ -340,6 +340,10 @@ public enum ClickHouseClientOption implements ClickHouseOption {
      */
     SSL_CERTIFICATE("sslcert", "", "SSL/TLS certificate."),
     /**
+     * SSL certificiate.
+     */
+    SSL_CERTIFICATE_PASSWORD("sslcert_password", "", "Password needed to access SSL/TLS certificate if store is protected."),
+    /**
      * SSL key.
      */
     SSL_KEY("sslkey", "", "RSA key in PKCS#8 format.", true),
